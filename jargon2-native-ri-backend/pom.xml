@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>jargon2-backends</artifactId>
+        <groupId>com.kosprov.jargon2</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>jargon2-native-ri-backend</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Jargon2 Native RI Backend</name>
+    <description>Jargon2 backend implementation that binds to Argon2 reference implementation native library</description>
+
+    <properties>
+        <!-- common properties -->
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+
+        <!-- build properties -->
+        <jnaerator-root>${project.build.directory}/jnaerator</jnaerator-root>
+
+        <!-- plugin versions -->
+        <maven-jnaerator-plugin-version>0.12</maven-jnaerator-plugin-version>
+        <maven-resources-plugin-version>2.7</maven-resources-plugin-version>
+        <build-helper-maven-plugin-version>3.0.0</build-helper-maven-plugin-version>
+
+        <!-- dependencies versions -->
+        <junit-version>4.12</junit-version>
+        <jnaerator-runtime-version>0.12</jnaerator-runtime-version>
+        <jargon2-version>1.0.0</jargon2-version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>sonatype</id>
+            <name>Sonatype OSS Snapshots Repository</name>
+            <url>http://oss.sonatype.org/content/groups/public</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>sonatype</id>
+            <name>Sonatype OSS Snapshots Repository</name>
+            <url>http://oss.sonatype.org/content/groups/public</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.nativelibs4java</groupId>
+            <artifactId>jnaerator-runtime</artifactId>
+            <version>${jnaerator-runtime-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kosprov.jargon2</groupId>
+            <artifactId>jargon2-api</artifactId>
+            <version>${jargon2-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.kosprov.jargon2</groupId>
+            <artifactId>jargon2-native-ri-binaries-generic</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit-version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${jnaerator-root}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/jnaerator</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                            <overwrite>true</overwrite>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.nativelibs4java</groupId>
+                <artifactId>maven-jnaerator-plugin</artifactId>
+                <version>${maven-jnaerator-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <config>${jnaerator-root}/config.jnaerator</config>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>test-long-running</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>${build-helper-maven-plugin-version}</version>
+                        <executions>
+                            <execution>
+                                <id>add-long-running-tests-source</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>add-test-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${project.basedir}/src/test-long-running/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

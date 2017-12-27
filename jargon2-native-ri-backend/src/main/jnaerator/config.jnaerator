@@ -1,0 +1,1 @@
+-library argon2 ${jnaerator-root}/argon2.h -runtime JNA
