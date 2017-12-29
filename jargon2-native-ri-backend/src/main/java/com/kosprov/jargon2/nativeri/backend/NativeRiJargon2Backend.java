@@ -30,6 +30,10 @@ public class NativeRiJargon2Backend implements Jargon2Backend {
             throw new Jargon2BackendException("Salt must not be null and its length must be greater or equal to " + ARGON2_MIN_SALT_LENGTH);
         }
 
+        if (password == null || password.length == 0) {
+            throw new Jargon2BackendException("Password must not be null or empty");
+        }
+
         if (lanes < ARGON2_MIN_LANES) {
             throw new Jargon2BackendException("Lanes must be greater or equal to " + ARGON2_MIN_LANES);
         }
@@ -76,8 +80,6 @@ public class NativeRiJargon2Backend implements Jargon2Backend {
             adMemory = copyToMemory(ad);
             outputMemory = createMemory(hashLength);
 
-            int status;
-
             Argon2_Context ctx = new Argon2_Context.ByReference();
             ctx.out = outputMemory;
             ctx.outlen = hashLength;
@@ -100,7 +102,7 @@ public class NativeRiJargon2Backend implements Jargon2Backend {
 
             int argon2Type = convertType(type);
 
-            status = Argon2Library.INSTANCE.argon2_ctx(ctx, argon2Type);
+            int status = Argon2Library.INSTANCE.argon2_ctx(ctx, argon2Type);
 
             if (status != ARGON2_OK) {
                 String errorMessage = Argon2Library.INSTANCE.argon2_error_message(status);
@@ -196,9 +198,6 @@ public class NativeRiJargon2Backend implements Jargon2Backend {
         } else {
             decoded.version = Version.V10;
         }
-        if (decoded.version == null) {
-            throw new Jargon2BackendException("Incorrect version. Check encoded hash.");
-        }
 
         parseOptions(parts[optionsIndex], decoded);
 
@@ -220,12 +219,12 @@ public class NativeRiJargon2Backend implements Jargon2Backend {
     private void parseOptions(String options, DecodedHash decoded) {
         String[] opts = split(options, ',', 3);
         if (opts.length != 3) {
-            throw new Jargon2BackendException("Options are not properly formatted");
+            throw new Jargon2BackendException("Wrong number of hashing options");
         }
 
         String memoryCostOption = opts[0];
         if (!memoryCostOption.startsWith("m=") || memoryCostOption.length() < 3) {
-            throw new Jargon2BackendException("Options are not properly formatted");
+            throw new Jargon2BackendException("Wrong memory cost option");
         }
         try {
             decoded.memoryCost = Integer.parseInt(memoryCostOption.substring(2));
@@ -235,7 +234,7 @@ public class NativeRiJargon2Backend implements Jargon2Backend {
 
         String timeCostOption = opts[1];
         if (!timeCostOption.startsWith("t=") || timeCostOption.length() < 3) {
-            throw new Jargon2BackendException("Options are not properly formatted");
+            throw new Jargon2BackendException("Wrong time cost option");
         }
         try {
             decoded.timeCost = Integer.parseInt(timeCostOption.substring(2));
@@ -245,7 +244,7 @@ public class NativeRiJargon2Backend implements Jargon2Backend {
 
         String parallelismOption = opts[2];
         if (!parallelismOption.startsWith("p=") || parallelismOption.length() < 3) {
-            throw new Jargon2BackendException("Options are not properly formatted");
+            throw new Jargon2BackendException("Wrong parallelism option");
         }
         try {
             decoded.parallelism = Integer.parseInt(parallelismOption.substring(2));
@@ -295,10 +294,10 @@ public class NativeRiJargon2Backend implements Jargon2Backend {
             } else if (Version.V10.getValue() == v) {
                 return Version.V10;
             } else {
-                throw new Jargon2BackendException("Incorrect version. Check encoded hash.");
+                throw new Jargon2BackendException("Invalid version number. Check encoded hash.");
             }
         } catch (NumberFormatException e) {
-            throw new Jargon2BackendException("Incorrect version. Check encoded hash.");
+            throw new Jargon2BackendException("Non-numeric version. Check encoded hash.");
         }
     }
 
@@ -413,7 +412,7 @@ public class NativeRiJargon2Backend implements Jargon2Backend {
         return base64;
     }
 
-    private static final byte decodeMapping[] = {
+    private static final byte[] decodeMapping = {
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
@@ -448,7 +447,7 @@ public class NativeRiJargon2Backend implements Jargon2Backend {
             encoded.getChars(i, i + 4, buf, 0);
             output[j++] = (byte) ((decodeMapping(buf[0]) << 2) | (decodeMapping(buf[1]) >>> 4));
             output[j++] = (byte) ((decodeMapping(buf[1]) << 4) | (decodeMapping(buf[2]) >>> 2));
-            output[j++] = (byte) ((decodeMapping(buf[2]) << 6) | (decodeMapping(buf[3])));
+            output[j++] = (byte) ((decodeMapping(buf[2]) << 6) | (decodeMapping(buf[3]) & 0xFF));
             i += 4;
         }
 
