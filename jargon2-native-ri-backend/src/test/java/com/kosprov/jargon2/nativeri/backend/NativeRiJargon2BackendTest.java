@@ -15,18 +15,17 @@ import static org.junit.Assert.*;
 
 public class NativeRiJargon2BackendTest {
 
-    NativeRiJargon2Backend backend = new NativeRiJargon2Backend();
+    private NativeRiJargon2Backend backend = new NativeRiJargon2Backend();
 
-    Type type = ARGON2i;
-    Version version = V13;
-    int memoryCost = 65536;
-    int timeCost = 2;
-    int lanes = 4;
-    int threads = 2;
-    int hashLength = 24;
-    byte[] salt = "somesalt".getBytes();
-    byte[] password = "password".getBytes();
-    String expextedEncodedHash = "$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$RdescudvJCsgt3ub+b+dWRWJTmaaJObG";
+    private Type type = ARGON2i;
+    private Version version = V13;
+    private int memoryCost = 65536;
+    private int timeCost = 2;
+    private int lanes = 4;
+    private int threads = 2;
+    private int hashLength = 24;
+    private byte[] salt = "somesalt".getBytes();
+    private byte[] password = "password".getBytes();
 
     @Test
     public void testDifferentLanesAndThreads() throws Exception {
@@ -47,7 +46,7 @@ public class NativeRiJargon2BackendTest {
 
         assertNotNull(encodedHash);
 
-        assertEquals(expextedEncodedHash, encodedHash);
+        assertEquals("$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$RdescudvJCsgt3ub+b+dWRWJTmaaJObG", encodedHash);
 
         {
             boolean matches = backend.verifyEncoded(
