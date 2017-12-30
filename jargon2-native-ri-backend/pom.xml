@@ -5,7 +5,7 @@
     <parent>
         <artifactId>jargon2-backends</artifactId>
         <groupId>com.kosprov.jargon2</groupId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,10 +16,6 @@
     <description>Jargon2 backend implementation that binds to Argon2 reference implementation native library</description>
 
     <properties>
-        <!-- common properties -->
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-
         <!-- build properties -->
         <jnaerator-root>${project.build.directory}/jnaerator</jnaerator-root>
 

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>jargon2-backends</artifactId>
         <groupId>com.kosprov.jargon2</groupId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

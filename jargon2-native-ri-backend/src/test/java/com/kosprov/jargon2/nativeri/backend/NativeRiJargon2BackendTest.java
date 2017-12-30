@@ -1,6 +1,5 @@
 package com.kosprov.jargon2.nativeri.backend;
 
-import com.kosprov.jargon2.spi.Jargon2Backend;
 import com.kosprov.jargon2.spi.Jargon2BackendException;
 import org.junit.Test;
 
@@ -8,26 +7,37 @@ import javax.xml.bind.DatatypeConverter;
 import java.util.Arrays;
 import java.util.Random;
 
+import static com.kosprov.jargon2.api.Jargon2.Type;
 import static com.kosprov.jargon2.api.Jargon2.Type.ARGON2i;
+import static com.kosprov.jargon2.api.Jargon2.Version;
 import static com.kosprov.jargon2.api.Jargon2.Version.V13;
 import static org.junit.Assert.*;
 
 public class NativeRiJargon2BackendTest {
+
+    NativeRiJargon2Backend backend = new NativeRiJargon2Backend();
+
+    Type type = ARGON2i;
+    Version version = V13;
+    int memoryCost = 65536;
+    int timeCost = 2;
+    int lanes = 4;
+    int threads = 2;
+    int hashLength = 24;
+    byte[] salt = "somesalt".getBytes();
+    byte[] password = "password".getBytes();
+    String expextedEncodedHash = "$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$RdescudvJCsgt3ub+b+dWRWJTmaaJObG";
+
     @Test
     public void testDifferentLanesAndThreads() throws Exception {
-        Jargon2Backend backend = new NativeRiJargon2Backend();
-
-        byte[] password = "password".getBytes("UTF-8");
-        byte[] salt = "somesalt".getBytes("UTF-8");
-
         String encodedHash = backend.encodedHash(
-                ARGON2i,
-                V13,
-                65536,
-                2,
-                4,
-                2,    // use only 2 threads to calculate 4 lanes
-                24,
+                type,
+                version,
+                memoryCost,
+                timeCost,
+                lanes,
+                threads,    // use only 2 threads to calculate 4 lanes
+                hashLength,
                 null,
                 null,
                 salt,
@@ -37,24 +47,356 @@ public class NativeRiJargon2BackendTest {
 
         assertNotNull(encodedHash);
 
-        assertEquals("$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$RdescudvJCsgt3ub+b+dWRWJTmaaJObG", encodedHash);
+        assertEquals(expextedEncodedHash, encodedHash);
 
-        boolean matches = backend.verifyEncoded(
-                encodedHash,
-                1,    // use only 1 thread to calculate 4 lanes
+        {
+            boolean matches = backend.verifyEncoded(
+                    encodedHash,
+                    1,    // use only 1 thread to calculate 4 lanes
+                    null,
+                    null,
+                    password,
+                    null
+            );
+
+            assertTrue(matches);
+        }
+
+        {
+            boolean matches = backend.verifyEncoded(
+                    encodedHash,
+                    lanes + 1,    // use more threads than lanes
+                    null,
+                    null,
+                    password,
+                    null
+            );
+
+            assertTrue(matches);
+        }
+
+        {
+            boolean matches = backend.verifyEncoded(
+                    encodedHash,
+                    -1,    // set threads to the number of lanes
+                    null,
+                    null,
+                    password,
+                    null
+            );
+
+            assertTrue(matches);
+        }
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void noEncodedHashTest() {
+        backend.verifyEncoded(null, -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void emptyEncodedHashTest() {
+        backend.verifyEncoded("", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void noTokensEncodedHashTest() {
+        backend.verifyEncoded("abcd", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongTokensEncodedHashTest() {
+        backend.verifyEncoded("$abc$def", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongTypeEncodedHashTest() {
+        backend.verifyEncoded("$xxx$xxx$xxx$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongVersionEncodedHashTest() {
+        backend.verifyEncoded("$argon2i$xxx$xxx$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongVersionLengthEncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=1$xxx$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongOptionsEncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=19$xxx$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void tooFewOptionsEncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=19$a=1,b=2$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void tooManyOptionsEncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=19$a=1,b=2,c=3,d=4$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongMemoryCostEncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=19$a=1,b=2,c=3$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongMemoryCostNumEncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=19$m=xxx,b=2,c=3$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongTimeCostEncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=19$m=65536,b=2,c=3$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongTimeCostNumEncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=19$m=65536,t=xxx,c=3$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongParallelismEncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=19$m=65536,t=2,c=3$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongParallelismNumEncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=19$m=65536,t=2,p=xxx$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongSaltBase64EncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=19$m=65536,t=2,p=4$xxx$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongOutputBase64EncodedHashTest() {
+        backend.verifyEncoded("$argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$xxx", -1, null, null, password, null);
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void noTypeTest() {
+        backend.encodedHash(
+                null,
+                version,
+                memoryCost,
+                timeCost,
+                lanes,
+                threads,
+                hashLength,
+                null,
+                null,
+                salt,
+                password,
+                null
+        );
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void noVersionTest() {
+        backend.encodedHash(
+                type,
+                null,
+                memoryCost,
+                timeCost,
+                lanes,
+                threads,
+                hashLength,
+                null,
+                null,
+                salt,
+                password,
+                null
+        );
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongHashLengthTest() {
+        backend.encodedHash(
+                type,
+                version,
+                memoryCost,
+                timeCost,
+                lanes,
+                threads,
+                1, // one byte output
+                null,
+                null,
+                salt,
+                password,
+                null
+        );
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void noSaltTest() {
+        backend.encodedHash(
+                type,
+                version,
+                memoryCost,
+                timeCost,
+                lanes,
+                threads,
+                hashLength,
+                null,
                 null,
                 null,
                 password,
                 null
         );
+    }
 
-        assertTrue(matches);
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongSaltLengthTest() {
+        backend.encodedHash(
+                type,
+                version,
+                memoryCost,
+                timeCost,
+                lanes,
+                threads,
+                hashLength,
+                null,
+                null,
+                new byte[7],
+                password,
+                null
+        );
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void noPasswordTest() {
+        backend.encodedHash(
+                type,
+                version,
+                memoryCost,
+                timeCost,
+                lanes,
+                threads,
+                hashLength,
+                null,
+                null,
+                salt,
+                null,
+                null
+        );
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongPasswordLengthTest() {
+        backend.encodedHash(
+                type,
+                version,
+                memoryCost,
+                timeCost,
+                lanes,
+                threads,
+                hashLength,
+                null,
+                null,
+                salt,
+                new byte[0],
+                null
+        );
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongLanesTest() {
+        backend.encodedHash(
+                type,
+                version,
+                memoryCost,
+                timeCost,
+                0,
+                threads,
+                hashLength,
+                null,
+                null,
+                salt,
+                password,
+                null
+        );
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongThreadsTest() {
+        backend.encodedHash(
+                type,
+                version,
+                memoryCost,
+                timeCost,
+                lanes,
+                0,
+                hashLength,
+                null,
+                null,
+                salt,
+                password,
+                null
+        );
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongMemoryCostTest() {
+        backend.encodedHash(
+                type,
+                version,
+                7,
+                timeCost,
+                lanes,
+                threads,
+                hashLength,
+                null,
+                null,
+                salt,
+                password,
+                null
+        );
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongMemoryCostGivenLanesTest() {
+        backend.encodedHash(
+                type,
+                version,
+                8 * lanes - 1,
+                timeCost,
+                lanes,
+                threads,
+                hashLength,
+                null,
+                null,
+                salt,
+                password,
+                null
+        );
+    }
+
+    @Test(expected = Jargon2BackendException.class)
+    public void wrongTimeCostTest() {
+        backend.encodedHash(
+                type,
+                version,
+                memoryCost,
+                0,
+                lanes,
+                threads,
+                hashLength,
+                null,
+                null,
+                salt,
+                password,
+                null
+        );
     }
 
     @Test
     public void base64Test() throws Exception {
-        NativeRiJargon2Backend backend = new NativeRiJargon2Backend();
-
         {
             byte[] input = "any carnal pleasure.".getBytes("UTF-8");
             char[] base64 = backend.base64encode(input);
@@ -137,38 +479,31 @@ public class NativeRiJargon2BackendTest {
 
     @Test(expected = Jargon2BackendException.class)
     public void base64WrongCharTest() {
-        NativeRiJargon2Backend backend = new NativeRiJargon2Backend();
         backend.base64decode("YW55IGNhcm*hbCBwbGVhcw");
     }
 
     @Test(expected = Jargon2BackendException.class)
     public void base64WrongChar2Test() {
-        NativeRiJargon2Backend backend = new NativeRiJargon2Backend();
         backend.base64decode("Φούμπαρ");
     }
 
     @Test(expected = Jargon2BackendException.class)
     public void base64WrongNumber1Test() {
-        NativeRiJargon2Backend backend = new NativeRiJargon2Backend();
         backend.base64decode("A");
     }
 
     @Test(expected = Jargon2BackendException.class)
     public void base64WrongNumber2Test() {
-        NativeRiJargon2Backend backend = new NativeRiJargon2Backend();
         backend.base64decode("AAAAA");
     }
 
     @Test(expected = Jargon2BackendException.class)
     public void base64WrongNumber3Test() {
-        NativeRiJargon2Backend backend = new NativeRiJargon2Backend();
         backend.base64decode("AAAAAAAAA");
     }
 
     @Test
-    public void splitTest() throws Exception {
-        NativeRiJargon2Backend backend = new NativeRiJargon2Backend();
-
+    public void splitTest() {
         {
             String str = "aaa@bbb@ccc";
             String[] tokens = backend.split(str, '@', 3);

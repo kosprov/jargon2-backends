@@ -6,7 +6,7 @@
     
     <groupId>com.kosprov.jargon2</groupId>
     <artifactId>jargon2-backends</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>pom</packaging>
 
     <name>Jargon2 Backends</name>
@@ -59,6 +59,8 @@
     <properties>
         <!-- common properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <gpg-keyname>4135CED0</gpg-keyname>
 
         <!-- plugin versions -->
