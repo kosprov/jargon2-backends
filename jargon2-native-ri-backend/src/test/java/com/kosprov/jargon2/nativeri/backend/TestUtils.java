@@ -1,8 +1,7 @@
 package com.kosprov.jargon2.nativeri.backend;
 
 import com.kosprov.jargon2.spi.Jargon2Backend;
-
-import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.binary.Hex;
 
 import static com.kosprov.jargon2.api.Jargon2.Type;
 import static com.kosprov.jargon2.api.Jargon2.Version;
@@ -14,7 +13,7 @@ class TestUtils {
         Jargon2Backend backend = new NativeRiJargon2Backend();
 
         byte[] calculatedRawHashBytes = backend.rawHash(type, version, memoryCost, timeCost, lanes, threads, hashLength, secret, ad, salt, password, null);
-        String calculatedRawHashHex = DatatypeConverter.printHexBinary(calculatedRawHashBytes);
+        String calculatedRawHashHex = Hex.encodeHexString(calculatedRawHashBytes);
         assertTrue(rawHashHex.equalsIgnoreCase(calculatedRawHashHex));
     }
 
@@ -30,7 +29,7 @@ class TestUtils {
         assertTrue(encodedMatched);
 
         byte[] calculatedRawHashBytes = backend.rawHash(type, version, memoryCost, timeCost, lanes, threads, 32, null, null, saltBytes, passwordBytes, null);
-        String calculatedRawHashHex = DatatypeConverter.printHexBinary(calculatedRawHashBytes);
+        String calculatedRawHashHex = Hex.encodeHexString(calculatedRawHashBytes);
         assertTrue(rawHashHex.equalsIgnoreCase(calculatedRawHashHex));
 
         boolean rawMatched = backend.verifyRaw(type, version, memoryCost, timeCost, lanes, threads, calculatedRawHashBytes, null, null, saltBytes, passwordBytes, null);

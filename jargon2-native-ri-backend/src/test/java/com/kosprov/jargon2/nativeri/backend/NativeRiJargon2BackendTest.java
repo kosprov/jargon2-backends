@@ -1,9 +1,9 @@
 package com.kosprov.jargon2.nativeri.backend;
 
 import com.kosprov.jargon2.spi.Jargon2BackendException;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 
-import javax.xml.bind.DatatypeConverter;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -465,7 +465,7 @@ public class NativeRiJargon2BackendTest {
                 byte[] input = new byte[1024 * 1024 + i];
                 new Random().nextBytes(input);
                 char[] base64 = backend.base64encode(input);
-                String standard = DatatypeConverter.printBase64Binary(input);
+                String standard = Base64.encodeBase64String(input);
                 while (standard.charAt(standard.length() - 1) == '=') {
                     standard = standard.substring(0, standard.length() - 1);
                 }
