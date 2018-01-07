@@ -29,10 +29,13 @@ extern "C" {
 /* Symbols visibility control */
 #ifdef A2_VISCTL
 #define ARGON2_PUBLIC __attribute__((visibility("default")))
+#define ARGON2_LOCAL __attribute__ ((visibility ("hidden")))
 #elif _MSC_VER
 #define ARGON2_PUBLIC __declspec(dllexport)
+#define ARGON2_LOCAL
 #else
 #define ARGON2_PUBLIC
+#define ARGON2_LOCAL
 #endif
 
 /*
@@ -432,4 +435,3 @@ ARGON2_PUBLIC size_t argon2_encodedlen(uint32_t t_cost, uint32_t m_cost,
 #endif
 
 #endif
-
