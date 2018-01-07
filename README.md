@@ -31,7 +31,7 @@ Simply add this dependency:
 <dependency>
     <groupId>com.kosprov.jargon2</groupId>
     <artifactId>jargon2-native-ri-backend</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <scope>runtime</scope>
 </dependency>
 ```
@@ -41,6 +41,8 @@ Simply add this dependency:
 ### Pre-packaged binaries
 
 To make adopting Jargon2 as easy as possible, `jargon2-native-ri-backend` has a transitive dependency to `jargon2-native-ri-binaries-generic`, an artifact that contains binaries of the reference implementation. They are available for Windows, Linux and macOS (x86 only), so it should work as-is on most systems.
+
+Release `1.1.0` of `jargon2-native-ri-binaries-generic` contains binaries built from Argon2 release [20171227](https://github.com/P-H-C/phc-winner-argon2/releases/tag/20171227 "Argon2 RI release 20171227").
 
 ### Using different binaries
 
@@ -72,7 +74,7 @@ To change the binaries you have two options:
     <dependency>
         <groupId>com.kosprov.jargon2</groupId>
         <artifactId>jargon2-native-ri-backend</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
         <scope>runtime</scope>
         <exclusions>
             <!-- exclude transitive dependency to generic binaries -->
