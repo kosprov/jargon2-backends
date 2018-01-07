@@ -42,8 +42,6 @@ Simply add this dependency:
 
 To make adopting Jargon2 as easy as possible, `jargon2-native-ri-backend` has a transitive dependency to `jargon2-native-ri-binaries-generic`, an artifact that contains binaries of the reference implementation. They are available for Windows, Linux and macOS (x86 only), so it should work as-is on most systems.
 
-> The binaries on `jargon2-native-ri-binaries-generic` are kindly provided by [argon2-jvm](https://github.com/phxql/argon2-jvm/tree/master/src/main/resources) (copied with permission by the developer).
-
 ### Using different binaries
 
 There are at least three reasons why one would need to use different binaries than those included in `jargon2-native-ri-binaries-generic`:
