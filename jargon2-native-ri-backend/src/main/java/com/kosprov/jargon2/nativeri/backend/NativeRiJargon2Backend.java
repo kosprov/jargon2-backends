@@ -255,7 +255,7 @@ public class NativeRiJargon2Backend implements Jargon2Backend {
 
     private String encodeString(Type type, Version version, int timeCost, int memoryCost, int lanes, byte[] salt, byte[] hash) {
         StringBuilder sb = new StringBuilder();
-        sb.append('$').append(type.name().toLowerCase());
+        sb.append('$').append(type.getValue());
         if (version.getValue() > Version.V10.getValue()) {
             sb.append('$').append("v=").append(version.getValue());
         }
