@@ -4,6 +4,7 @@ import com.kosprov.jargon2.spi.Jargon2BackendException;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -397,7 +398,7 @@ public class NativeRiJargon2BackendTest {
     @Test
     public void base64Test() throws Exception {
         {
-            byte[] input = "any carnal pleasure.".getBytes("UTF-8");
+            byte[] input = "any carnal pleasure.".getBytes(StandardCharsets.UTF_8);
             char[] base64 = backend.base64encode(input);
             assertTrue(Arrays.equals("YW55IGNhcm5hbCBwbGVhc3VyZS4".toCharArray(), base64));
             byte[] decoded = backend.base64decode(new String(base64));
@@ -405,7 +406,7 @@ public class NativeRiJargon2BackendTest {
         }
 
         {
-            byte[] input = "any carnal pleasure".getBytes("UTF-8");
+            byte[] input = "any carnal pleasure".getBytes(StandardCharsets.UTF_8);
             char[] base64 = backend.base64encode(input);
             assertTrue(Arrays.equals("YW55IGNhcm5hbCBwbGVhc3VyZQ".toCharArray(), base64));
             byte[] decoded = backend.base64decode(new String(base64));
@@ -413,7 +414,7 @@ public class NativeRiJargon2BackendTest {
         }
 
         {
-            byte[] input = "any carnal pleasur".getBytes("UTF-8");
+            byte[] input = "any carnal pleasur".getBytes(StandardCharsets.UTF_8);
             char[] base64 = backend.base64encode(input);
             assertTrue(Arrays.equals("YW55IGNhcm5hbCBwbGVhc3Vy".toCharArray(), base64));
             byte[] decoded = backend.base64decode(new String(base64));
@@ -421,7 +422,7 @@ public class NativeRiJargon2BackendTest {
         }
 
         {
-            byte[] input = "any carnal pleasu".getBytes("UTF-8");
+            byte[] input = "any carnal pleasu".getBytes(StandardCharsets.UTF_8);
             char[] base64 = backend.base64encode(input);
             assertTrue(Arrays.equals("YW55IGNhcm5hbCBwbGVhc3U".toCharArray(), base64));
             byte[] decoded = backend.base64decode(new String(base64));
@@ -429,7 +430,7 @@ public class NativeRiJargon2BackendTest {
         }
 
         {
-            byte[] input = "any carnal pleas".getBytes("UTF-8");
+            byte[] input = "any carnal pleas".getBytes(StandardCharsets.UTF_8);
             char[] base64 = backend.base64encode(input);
             assertTrue(Arrays.equals("YW55IGNhcm5hbCBwbGVhcw".toCharArray(), base64));
             byte[] decoded = backend.base64decode(new String(base64));
@@ -437,7 +438,7 @@ public class NativeRiJargon2BackendTest {
         }
 
         {
-            byte[] input = "M".getBytes("UTF-8");
+            byte[] input = "M".getBytes(StandardCharsets.UTF_8);
             char[] base64 = backend.base64encode(input);
             assertTrue(Arrays.equals("TQ".toCharArray(), base64));
             byte[] decoded = backend.base64decode(new String(base64));
@@ -445,7 +446,7 @@ public class NativeRiJargon2BackendTest {
         }
 
         {
-            byte[] input = "Ma".getBytes("UTF-8");
+            byte[] input = "Ma".getBytes(StandardCharsets.UTF_8);
             char[] base64 = backend.base64encode(input);
             assertTrue(Arrays.equals("TWE".toCharArray(), base64));
             byte[] decoded = backend.base64decode(new String(base64));
@@ -453,7 +454,7 @@ public class NativeRiJargon2BackendTest {
         }
 
         {
-            byte[] input = "Man".getBytes("UTF-8");
+            byte[] input = "Man".getBytes(StandardCharsets.UTF_8);
             char[] base64 = backend.base64encode(input);
             assertTrue(Arrays.equals("TWFu".toCharArray(), base64));
             byte[] decoded = backend.base64decode(new String(base64));

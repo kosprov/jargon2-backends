@@ -4,6 +4,7 @@ import com.kosprov.jargon2.spi.Jargon2Backend;
 import com.kosprov.jargon2.spi.Jargon2BackendException;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static com.kosprov.jargon2.api.Jargon2.Type.*;
@@ -25,8 +26,8 @@ public class ReferenceImplementationTest {
     public void testHashFromOfficialExample() throws Exception {
         Jargon2Backend backend = new NativeRiJargon2Backend();
 
-        byte[] password = "password".getBytes("UTF-8");
-        byte[] salt = "somesalt".getBytes("UTF-8");
+        byte[] password = "password".getBytes(StandardCharsets.UTF_8);
+        byte[] salt = "somesalt".getBytes(StandardCharsets.UTF_8);
 
         String encodedHash = backend.encodedHash(
                 ARGON2i,
