@@ -128,6 +128,9 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
+                        <configuration>
+                            <scope>compile</scope>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
