@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.1.1
+
+Release date: May 10, 2018
+
+- Minor improvements in code and build script (backwards compatible)
+
 ## v1.1.0
 
 Release date: Jan 06, 2017
