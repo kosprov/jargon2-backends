@@ -23,6 +23,7 @@
         <maven-jnaerator-plugin-version>0.12</maven-jnaerator-plugin-version>
         <maven-resources-plugin-version>2.7</maven-resources-plugin-version>
         <build-helper-maven-plugin-version>3.0.0</build-helper-maven-plugin-version>
+        <dependency-check-maven-version>3.0.2</dependency-check-maven-version>
 
         <!-- dependencies versions -->
         <junit-version>4.12</junit-version>
@@ -117,6 +118,24 @@
                         <configuration>
                             <config>${jnaerator-root}/config.jnaerator</config>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check-maven-version}</version>
+                <configuration>
+                    <suppressionFile>project-suppression.xml</suppressionFile>
+                    <!--<failBuildOnCVSS>4</failBuildOnCVSS>-->
+                    <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

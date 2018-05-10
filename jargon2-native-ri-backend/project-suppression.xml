@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+    <suppress>
+        <notes><![CDATA[
+           file name: ochafik-util-0.12.jar
+        ]]></notes>
+        <gav regex="true">^com\.nativelibs4java:ochafik-util:.*$</gav>
+        <cpe>cpe:/a:a-blog:a-blog</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+            file name: ochafik-util-0.12.jar
+        ]]></notes>
+        <gav regex="true">^com\.nativelibs4java:ochafik-util:.*$</gav>
+        <cpe>cpe:/a:blog_project:blog</cpe>
+    </suppress>
+</suppressions>
