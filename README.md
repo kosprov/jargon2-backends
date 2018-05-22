@@ -5,7 +5,6 @@
 [![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/com/kosprov/jargon2/jargon2-native-ri-backend/maven-metadata.xml.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.kosprov.jargon2%22%20AND%20a%3A%22jargon2-native-ri-backend%22)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=com.kosprov.jargon2%3Ajargon2-backends&metric=alert_status)](https://sonarcloud.io/dashboard/index/com.kosprov.jargon2:jargon2-backends)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=com.kosprov.jargon2%3Ajargon2-backends&metric=security_rating)](https://sonarcloud.io/dashboard/index/com.kosprov.jargon2:jargon2-backends)
-[![Dependency Status](https://www.versioneye.com/user/projects/5af3e85c0fb24f0e5baabe55/badge.svg)](https://www.versioneye.com/user/projects/5af3e85c0fb24f0e5baabe55)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/LICENSE)
 
 This repository aims to be a collection of `com.kosprov.jargon2.spi.Jargon2Backend` SPI implementations, ready to plugged into the Jargon2 API. Artifacts contain all service provider metadata and can be used by simply adding them into the runtime classpath.
