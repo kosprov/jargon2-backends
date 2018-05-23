@@ -7,7 +7,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=com.kosprov.jargon2%3Ajargon2-backends&metric=security_rating)](https://sonarcloud.io/dashboard/index/com.kosprov.jargon2:jargon2-backends)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/LICENSE)
 
-This repository aims to be a collection of `com.kosprov.jargon2.spi.Jargon2Backend` SPI implementations, ready to plugged into the Jargon2 API. Artifacts contain all service provider metadata and can be used by simply adding them into the runtime classpath.
+This repository aims to be a collection of `com.kosprov.jargon2.spi.Jargon2Backend` SPI implementations, ready to be plugged into the Jargon2 API. Artifacts contain all service provider metadata and can be used by simply adding them into the runtime classpath.
 
 ## Security considerations
 
@@ -23,7 +23,7 @@ This section summarizes any security considerations that come with the use of th
 Currently, there is only one implementation named `jargon2-native-ri-backend` that wraps the [Argon2 reference implementation](https://github.com/P-H-C/phc-winner-argon2 "Argon2 reference implementation repository"). It's unique characteristic is that it binds directly to the low-level API of the C code. This allows for two distinctive features of the high-level Jargon2 API:
 
 - Ability to set memory lanes and threads independently
-- Leverage Argon2 RI API for keyed-hashing and additional authentication data
+- Leverage Argon2 RI API for keyed-hashing and additional authentication data (AAD)
 
 ### Usage
 
@@ -102,4 +102,4 @@ If you're having doubts on which Argon2 binaries are loaded, start the JVM with 
 
 JNA searches for libraries in locations that can be can be controlled with `-Djna.boot.library.path`, `-Djna.library.path` and `-Djna.nosys` system properties. Keep your security engineers alerted and have them scan or change-detect for improper use of these properties. Make sure they protect them as they would protect JAAS login module or security manager system properties and configuration files. Changing those system properties so that a malicius native library gets loaded, will leak all your user's passwords.
 
-If you are using SELinux, loading the native library from the classpath (as `jargon2-native-ri-binaries-generic` does) would not work. You would have to install the library in an accessible location. You can also define `-Djna.nounpack=true` to make sure the library is never unpacked from the classpath.
+If you are using SELinux, loading the native library from the classpath (as `jargon2-native-ri-binaries-generic` does) may not work. You would have to install the library in an accessible location. You can also define `-Djna.nounpack=true` to make sure the library is never unpacked from the classpath.
