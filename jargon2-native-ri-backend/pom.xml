@@ -23,7 +23,7 @@
         <maven-jnaerator-plugin-version>0.12</maven-jnaerator-plugin-version>
         <maven-resources-plugin-version>3.1.0</maven-resources-plugin-version>
         <build-helper-maven-plugin-version>3.0.0</build-helper-maven-plugin-version>
-        <dependency-check-maven-version>3.1.2</dependency-check-maven-version>
+        <dependency-check-maven-version>3.2.1</dependency-check-maven-version>
 
         <!-- dependencies versions -->
         <junit-version>4.12</junit-version>
